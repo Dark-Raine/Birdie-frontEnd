@@ -1,24 +1,57 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
+import propTypes from "prop-types";
+import { connect } from "react-redux";
+import {
+  fetchOptions,
+  selectOption,
+  storeOptionData
+} from "../actions/optionActions";
 
-class DropDownMenu extends Component{
+class DropDownMenu extends Component {
+  componentWillMount() {
+    this.props.fetchOptions();
+  }
 
-    optionGenerator = (titles = this.props.options) => {
-        return titles.map((title, idx) => <option value={title} key={idx}>{title}</option>)
-    }
+  optionGenerator = (options = this.props.options) => {
+    return options.map((option, idx) => (
+      <option value={option} key={idx}>
+        {option}
+      </option>
+    ));
+  };
 
-    sendSelected = (event, cb = this.props.updateState) => {
-        cb(event.target.value)
-    }
+  sendSelected = (event, cb = this.props.selectOption) => {
+    cb(event.target.value);
+    this.props.storeOptionData(encodeURI(event.target.value));
+  };
 
   render() {
     return (
-        <div id="column-selector">
-            <select onChange={(event) => this.sendSelected(event)}>
-                {this.optionGenerator()}
-            </select>
-        </div>
+      <div id="column-selector">
+        <select
+          defaultValue="Please Select"
+          onChange={event => this.sendSelected(event)}
+        >
+          <option value={null} disabled="disabled">
+            Please Select
+          </option>
+          {this.optionGenerator()}
+        </select>
+      </div>
     );
   }
 }
 
-export default DropDownMenu;
+DropDownMenu.propTypes = {
+  fetchOptions: propTypes.func.isRequired,
+  options: propTypes.array.isRequired
+};
+
+const mapStateToProps = state => ({
+  options: state.options.options
+});
+
+export default connect(
+  mapStateToProps,
+  { fetchOptions, selectOption, storeOptionData }
+)(DropDownMenu);

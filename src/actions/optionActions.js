@@ -3,16 +3,15 @@ import {
   SELECT_OPTION,
   STORE_OPTION_DATA
 } from "../actions/types";
+import API from "../helpers/API";
 
 export const fetchOptions = () => dispatch => {
-  fetch("http://localhost:5000/column/variables")
-    .then(resp => resp.json())
-    .then(data =>
-      dispatch({
-        type: POPULATE_OPTIONS,
-        data
-      })
-    );
+  API.retrieveOptions().then(data =>
+    dispatch({
+      type: POPULATE_OPTIONS,
+      data
+    })
+  );
 };
 
 export const selectOption = option => dispatch => {
@@ -23,12 +22,10 @@ export const selectOption = option => dispatch => {
 };
 
 export const storeOptionData = option => dispatch => {
-  fetch(`http://localhost:5000/${option}`)
-    .then(resp => resp.json())
-    .then(data =>
-      dispatch({
-        type: STORE_OPTION_DATA,
-        data
-      })
-    );
+  API.retrieveData(option).then(data =>
+    dispatch({
+      type: STORE_OPTION_DATA,
+      data
+    })
+  );
 };
